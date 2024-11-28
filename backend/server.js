@@ -35,7 +35,7 @@ app.post("/",async(req,res)=>{
         await dataInserted.save();
         console.log(data);
         res.send(dataInserted);
-    }catch{
+    }catch(error){
         console.error('Error Inserting data:', error);
         res.status(500).json({ message: 'Error fetching data' });
     }
@@ -43,10 +43,11 @@ app.post("/",async(req,res)=>{
 
 app.delete("/",async(req,res)=>{
     try{
-        const id=req.body.id;
-        const collection=await sealPassmon.findOneAndDelete(id);
+        const data=req.body;
+        console.log(data);
+        const collection=await sealPassmon.findOneAndDelete({id:data.id})
         res.send({success:true,result:collection});
-    }catch{
+    }catch(error){
         console.error('Error Inserting data:', error);
         res.status(500).json({ message: 'Error Deleting data' });
     }
@@ -55,9 +56,10 @@ app.delete("/",async(req,res)=>{
 app.put("/",async(req,res)=>{
     try{
         const data=req.body;
-        const collection=await sealPassmon.findOneAndUpdate(data.id,{url:data.url,username:data.username,password:data.password});
+        console.log(data);
+        const collection=await sealPassmon.findOneAndUpdate({id:data.id},{url:data.url,username:data.username,password:data.password});
         res.send({success:true,result:collection});
-    }catch{
+    }catch(error){
         console.error('Error Inserting data:', error);
         res.status(500).json({ message: 'Error Updating data' });
     }

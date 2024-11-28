@@ -21,8 +21,8 @@ th{
 }
 td{
     padding: 15px;
-    border:2px solid white;
     overflow-x: scroll;
+    text-overflow: ellipsis;
 }
 
 tbody,.copy-btn{
@@ -40,4 +40,16 @@ ul{
 }
 img{
     cursor: pointer;
+}
+td:nth-child(2), th:nth-child(2) {
+    width: 20%;
+}
+td:nth-child(1), th:nth-child(1) {
+    width: 20%;
+}
+td:nth-child(3), th:nth-child(3) {
+    width: 20%;
+}
+td:nth-child(4), th:nth-child(4) {
+    width: 10%;
 }
