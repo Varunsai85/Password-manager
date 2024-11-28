@@ -213,7 +213,7 @@ const Content = () => {
                     </div>
                 </form>
                 <section className='w-[75%] mx-auto'>
-                    <div className='text-center text-xl font-bold'>Your Credentials</div>
+                    <div className='text-center text-xl font-bold mb-3'>Your Credentials</div>
                     {credentialArray.length === 0 && <div className='text-center mt-5 font-bold text-3xl'>No Passwords to Show</div>}
                     {credentialArray.length != 0 &&
                         <table className='w-full'>
