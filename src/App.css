@@ -1,0 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+:root{
+    --main-font:"Roboto", sans-serif;
+    --footer-font:"JetBrains Mono", monospace;
+}
+
+body{
+    background-color: black;
+    color: white;
+    font-family: var(--main-font);
+}
+
+.text-shadow{
+    text-shadow: 0px 0px 5px white;
+}
+
+th{
+    padding: 10px;
+}
+td{
+    padding: 15px;
+    border:2px solid white;
+    overflow-x: scroll;
+}
+
+tbody,.copy-btn{
+    background-color: rgb(16, 16, 16);
+}
+
+table{
+    border: 1px solid white;
+    border-radius: 10px;
+    overflow: hidden;
+    table-layout: fixed;
+}
+ul{
+    font-family: var(--footer-font);
+}
+img{
+    cursor: pointer;
+}
