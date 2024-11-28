@@ -7,7 +7,7 @@ function App() {
 
   return (
     <>
-      <div className='p-8'>
+      <div className='px-8 py-4'>
         <Navbar />
         <Content />
       </div>

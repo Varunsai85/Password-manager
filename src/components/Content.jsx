@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+
 const Content = () => {
     const ref = useRef();
     const passType = useRef();
@@ -11,9 +12,14 @@ const Content = () => {
     const [credentialArray, setcredentialArray] = useState([])
     const [edit_status, setedit_status] = useState(false)
     const [updateFlag, setUpdateFlag] = useState(false);
+    const [confirmAction, setconfirmAction] = useState(null);
+    const [dialog, setdialog] = useState(false)
+    const [choice, setchoice] = useState("")
+
+    const serverURL=import.meta.env.VITE_SERVER_URL;
 
     const getData = async () => {
-        let req = await fetch("http://localhost:3000");
+        let req = await fetch(serverURL);
         let data = await req.json();
         setcredentialArray(data);
     }
@@ -22,6 +28,10 @@ const Content = () => {
         getData();
     }, [updateFlag])
 
+    const confirmChoice = (onConfirm) => {
+        setconfirmAction(()=>onConfirm);
+        setdialog(true);
+    }
 
     function passVisibility() {
         if (ref.current.src.includes("icons/eye-open.svg")) {
@@ -41,16 +51,15 @@ const Content = () => {
             e.preventDefault();
             return;
         }
-        if(edit_status){
+        if (edit_status) {
             e.preventDefault();
-            await fetch("http://localhost:3000",
+            await fetch(serverURL,
                 {
-                    method:"PUT",
-                    headers:{"content-type":"application/json"},
-                    body:JSON.stringify({...form,id:form.id})
+                    method: "PUT",
+                    headers: { "content-type": "application/json" },
+                    body: JSON.stringify({ ...form, id: form.id })
                 }
             )
-            setform({ id: "", url: "", username: "", password: "" });
             toast('Credential Updated Successfully', {
                 position: "top-right",
                 autoClose: 2000,
@@ -61,12 +70,12 @@ const Content = () => {
                 progress: undefined,
                 theme: "dark"
             });
+            setform({ id: "", url: "", username: "", password: "" });
             setedit_status(!edit_status);
             console.log(edit_status);
-        }else{
+        } else {
             e.preventDefault();
-            await fetch("http://localhost:3000", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ ...form, id: uuidv4() }) })
-            setform({ id: "", url: "", username: "", password: "" })
+            await fetch(serverURL, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ ...form, id: uuidv4() }) })
             toast('Credential Saved Successfully', {
                 position: "top-right",
                 autoClose: 2000,
@@ -77,28 +86,47 @@ const Content = () => {
                 progress: undefined,
                 theme: "dark"
             });
+            setform({ id: "", url: "", username: "", password: "" })
         }
         setUpdateFlag(!updateFlag);
     }
 
     const deleteCredentials = async (id) => {
-        let c = confirm("Are you sure to delete credentials");
-        if (c) {
-            try{
-                await fetch("http://localhost:3000", { method: "DELETE", headers: { "content-type": "application/json" }, body: JSON.stringify({id}) })
-                console.log(`The document with id:${id} is deleted`);
-                toast('Credential Deleted Successfully', {
-                    position: "top-right",
-                    autoClose: 2000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "dark"
+        setchoice("delete");
+        confirmChoice(async () => {
+            try {
+                const res=await fetch(serverURL, { 
+                    method: "DELETE", 
+                    headers: { "content-type": "application/json" }, 
+                    body: JSON.stringify({ id }) 
                 });
-                setUpdateFlag(!updateFlag);
-            }catch(err){
+                if(res.ok){
+                    console.log(`The document with id:${id} is deleted`);
+                    toast('Credential Deleted Successfully', {
+                        position: "top-right",
+                        autoClose: 2000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "dark"
+                    });
+                    setUpdateFlag(!updateFlag);
+                }else{
+                    toast('Failed to delete credential', {
+                        position: "top-right",
+                        autoClose: 2000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "dark"
+                    });
+                    throw new Error('Failed to delete the credential');
+                }
+            } catch (err) {
                 toast('Error deleting credentials. Please try again.', {
                     position: "top-right",
                     autoClose: 2000,
@@ -110,16 +138,19 @@ const Content = () => {
                     theme: "dark"
                 });
             }
-        }
+        })
     }
 
     const editCredentials = async (id) => {
-        // Confirm user action
-        const confirmEdit = confirm("Are you sure you want to edit the credentials?");
-        if (confirmEdit) {
-            setedit_status(!edit_status);
-            setform(credentialArray.filter(i=>i.id===id)[0]);
-        }
+        setchoice("edit")
+        confirmChoice(()=>{
+            try{
+                setedit_status(!edit_status);
+                setform(credentialArray.filter(i => i.id === id)[0]);
+            }catch(err){
+                console.log(`Failed to edit with error ${err}`);
+            }
+        })
     };
 
     const copy = (text) => {
@@ -133,11 +164,24 @@ const Content = () => {
             progress: undefined,
             theme: "dark"
         });
-        navigator.clipboard.writeText(text).then(() => {console.log("Text-copied");}).catch(err => console.error("Failed to copy text: ", err));
+        navigator.clipboard.writeText(text).then(() => { console.log("Text-copied"); }).catch(err => console.error("Failed to copy text: ", err));
     }
 
     return (
         <>
+            {dialog &&
+                <div className='flex glass-filter mx-auto w-[100%] h-[100%] justify-center items-center z-10 fixed top-0 left-0 rounded-lg'>
+                    <div className='confirm-btn bg-black w-[35%] h-[35%] rounded-xl flex flex-col items-center justify-center gap-6'>
+                        <div className='font-bold text-2xl'>
+                            Are you sure to {choice} credentials
+                        </div>
+                        <div className='flex gap-14'>
+                            <button onClick={() => { confirmAction(); setdialog(false); }} className='hover:bg-white hover:text-black font-bold px-5 py-2 rounded-full outline outline-white active:bg-slate-200'>Yes</button>
+                            <button onClick={() => setdialog(false)} className='hover:bg-white hover:text-black font-bold px-5 py-2 rounded-full outline outline-white active:bg-slate-200'>Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            }
             <ToastContainer />
             <main className='mt-6'>
                 <section className='text-shadow w-full'>
@@ -186,14 +230,14 @@ const Content = () => {
                                     return <tr key={index}>
                                         <td className='cursor-pointer'><a target='_blank' href={item.url}>{item.url}</a></td>
 
-                                        <td className='relative'><span>{item.username}</span><span onClick={()=>copy(item.username)} className='absolute right-2 copy-btn'><img src="icons/copy.svg" alt="copy-btn" /></span></td>
+                                        <td className='relative'><span>{item.username}</span><span onClick={() => copy(item.username)} className='absolute right-2 copy-btn'><img src="icons/copy.svg" alt="copy-btn" /></span></td>
 
-                                        <td className='relative'><span>{"●".repeat(item.password.length)}</span><span onClick={()=>copy(item.password)} className='absolute right-2 copy-btn'><img src="icons/copy.svg" alt="copy-btn" /></span></td>
+                                        <td className='relative'><span>{"●".repeat(item.password.length)}</span><span onClick={() => copy(item.password)} className='absolute right-2 copy-btn'><img src="icons/copy.svg" alt="copy-btn" /></span></td>
 
                                         <td>
                                             <div className='flex w-full gap-7 justify-center items-center'>
-                                                <span onClick={()=>editCredentials(item.id)}><img src="icons/edit.svg" alt="edit-btn" /></span>
-                                                <span onClick={()=>deleteCredentials(item.id)}><img src="icons/delete.svg" alt="delete-btn" /></span>
+                                                <span onClick={() => editCredentials(item.id)}><img src="icons/edit.svg" alt="edit-btn" /></span>
+                                                <span onClick={() => deleteCredentials(item.id)}><img src="icons/delete.svg" alt="delete-btn" /></span>
                                             </div>
                                         </td>
                                     </tr>
