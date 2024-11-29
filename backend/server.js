@@ -21,7 +21,7 @@ mongoose.connect(process.env.MONGODB_URI).then(()=>{
 app.get("/", async(req,res)=>{
     try{
         const collection=await sealPassmon.find({});
-        res.send("Connected to DB")
+        res.json(collection);
     }catch(error){
         console.error('Error fetching data:', error);
         res.status(500).json({ message: 'Error fetching data' });
