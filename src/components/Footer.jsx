@@ -34,7 +34,7 @@ const Footer = () => {
                     <div>
                         <h3>Contribute</h3>
                         <ul>
-                            <li><a href="mailto:varunsainadiminti@gmail.com">Github</a></li>
+                            <li><a target='_blank' href="https://github.com/Varunsai85">Github</a></li>
                         </ul>
                     </div>
                 </div>

@@ -12,16 +12,16 @@ const port=3000;
 app.use(cors());
 app.use(bodyParser.json());
 
-// mongoose.connect(process.env.MONGODB_URI).then(()=>{
-//     console.log("Connected to database");
-// }).catch((err)=>{
-//     console.log(`Failed to connect to database with error ${err}`);
-// })
+mongoose.connect(process.env.MONGODB_URI).then(()=>{
+    console.log("Connected to database");
+}).catch((err)=>{
+    console.log(`Failed to connect to database with error ${err}`);
+})
 
-app.get("/test", async(req,res)=>{
+app.get("/", async(req,res)=>{
     try{
         const collection=await sealPassmon.find({});
-        res.json(collection);
+        res.send("Connected to DB")
     }catch(error){
         console.error('Error fetching data:', error);
         res.status(500).json({ message: 'Error fetching data' });
@@ -65,7 +65,7 @@ app.put("/",async(req,res)=>{
     }
 })
 
-app.get("/",(req,res)=>{
+app.get("/test",(req,res)=>{
     res.send("Hello this is for test");
 })
 
