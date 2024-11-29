@@ -12,7 +12,7 @@ const port=3000;
 app.use(cors());
 app.use(bodyParser.json());
 
-mongoose.connect(process.env.MONGOD_PATH).then(()=>{
+mongoose.connect(process.env.MONGODB_URI).then(()=>{
     console.log("Connected to database");
 }).catch((err)=>{
     console.log(`Failed to connect to database with error ${err}`);
