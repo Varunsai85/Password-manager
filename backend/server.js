@@ -18,11 +18,11 @@ mongoose.connect(process.env.MONGOD_PATH).then(()=>{
     console.log(`Failed to connect to database with error ${err}`);
 })
 
-app.get("/", async(req,res)=>{
+app.get("/test", async(req,res)=>{
     try{
         const collection=await sealPassmon.find({});
         res.json(collection);
-    }catch{
+    }catch(error){
         console.error('Error fetching data:', error);
         res.status(500).json({ message: 'Error fetching data' });
     }
@@ -65,7 +65,7 @@ app.put("/",async(req,res)=>{
     }
 })
 
-app.get("/test",(req,res)=>{
+app.get("/",(req,res)=>{
     res.send("Hello this is for test");
 })
 
