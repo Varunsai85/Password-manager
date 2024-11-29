@@ -12,11 +12,11 @@ const port=3000;
 app.use(cors());
 app.use(bodyParser.json());
 
-mongoose.connect(process.env.MONGOD_PATH).then(()=>{
-    console.log("Connected to database");
-}).catch((err)=>{
-    console.log(`Failed to connect to database with error ${err}`);
-})
+// mongoose.connect(process.env.MONGOD_PATH).then(()=>{
+//     console.log("Connected to database");
+// }).catch((err)=>{
+//     console.log(`Failed to connect to database with error ${err}`);
+// })
 
 app.get("/test", async(req,res)=>{
     try{
