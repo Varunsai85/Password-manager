@@ -65,6 +65,10 @@ app.put("/",async(req,res)=>{
     }
 })
 
+app.get("/test",(req,res)=>{
+    res.send("Hello this is for test");
+})
+
 
 app.listen(port,()=>{
     console.log(`Server listening on http://localhost:${port}`);
