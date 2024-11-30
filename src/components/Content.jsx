@@ -153,7 +153,8 @@ const Content = () => {
         })
     };
 
-    const copy = (text) => {
+    const copy = async(text) => {
+        await navigator.clipboard.writeText(text).then(() => { console.log("Text-copied"); }).catch(err => console.error("Failed to copy text: ", err));
         toast('Copied to clipboard', {
             position: "top-right",
             autoClose: 2000,
@@ -164,7 +165,6 @@ const Content = () => {
             progress: undefined,
             theme: "dark"
         });
-        navigator.clipboard.writeText(text).then(() => { console.log("Text-copied"); }).catch(err => console.error("Failed to copy text: ", err));
     }
 
     return (

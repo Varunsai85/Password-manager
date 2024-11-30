@@ -29,6 +29,7 @@ const Footer = () => {
                         <ul>
                             <li><a target='_blank' href="mailto:varunsainadiminti@gmail.com">Email</a></li>
                             <li><a target='_blank' href="https://x.com/varunnadiminti">X(formerly twitter)</a></li>
+                            <li><a target='_blank' href="https://www.linkedin.com/in/varunsainadiminti/">Linkedin</a></li>
                         </ul>
                     </div>
                     <div>
