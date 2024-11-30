@@ -154,17 +154,49 @@ const Content = () => {
     };
 
     const copy = async(text) => {
-        await navigator.clipboard.writeText(text).then(() => { console.log("Text-copied"); }).catch(err => console.error("Failed to copy text: ", err));
-        toast('Copied to clipboard', {
-            position: "top-right",
-            autoClose: 2000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "dark"
-        });
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            try {
+                await navigator.clipboard.writeText(text);
+                console.log("Text copied to clipboard!");
+                toast('Copied to clipboard', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark"
+                });
+            } catch (err) {
+                console.error("Failed to copy text: ", err);
+            }
+        } else {
+            // Fallback for unsupported environments
+            const textarea = document.createElement("textarea");
+            textarea.value = text;
+            textarea.style.position = "fixed"; // Prevent scrolling to the bottom of the page
+            document.body.appendChild(textarea);
+            textarea.focus();
+            textarea.select();
+            try {
+                document.execCommand("copy");
+                console.log("Text copied to clipboard using fallback!");
+                toast('Copied to clipboard', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark"
+                });
+            } catch (err) {
+                console.error("Fallback: Unable to copy text", err);
+            }
+            document.body.removeChild(textarea);
+        }
     }
 
     return (
@@ -193,12 +225,12 @@ const Content = () => {
                     </div>
                 </section>
                 <form className='flex flex-col gap-3 w-[75%] mx-auto my-6'>
-                    <input onChange={handleChange} value={form.url} className='bg-neutral-900 rounded-full py-3 px-5 outline-none w-full hover:bg-neutral-500' type="text" name='url' placeholder='Website URL' />
+                    <input onChange={handleChange} value={form.url} className='bg-neutral-900 rounded-full py-3 px-5 outline-none w-full hover:bg-neutral-800 focus-within:outline-white focus-within:outline' type="text" name='url' placeholder='Website URL' />
                     <div className='flex gap-3'>
-                        <input onChange={handleChange} value={form.username} autoComplete="username" className='bg-neutral-900 rounded-full py-3 px-5 outline-none w-full hover:bg-neutral-500' type="text" name='username' placeholder='Username' />
-                        <div className='group relative w-full hover:bg-neutral-500 rounded-full'>
-                            <input onChange={handleChange} value={form.password} ref={passType} className='bg-neutral-900 relative rounded-full py-3 px-5 outline-none w-full group-hover:bg-neutral-500' type="password" name='password' placeholder='Password' autoComplete="current-password" required />
-                            <span className='absolute right-2 top-1 rounded-r-full bg-neutral-900 p-2 group-hover:bg-neutral-500'><img ref={ref} className='invert size-6 cursor-pointer' onClick={passVisibility} src="icons/eye-close.svg" alt="hide" /></span>
+                        <input onChange={handleChange} value={form.username} autoComplete="username" className='bg-neutral-900 rounded-full py-3 px-5 outline-none w-full hover:bg-neutral-800 focus-within:outline-white focus-within:outline' type="text" name='username' placeholder='Username' />
+                        <div className='group relative w-full hover:bg-neutral-800 rounded-full focus-within:outline-white focus-within:outline'>
+                            <input onChange={handleChange} value={form.password} ref={passType} className='bg-neutral-900 relative rounded-full py-3 px-5 outline-none w-full group-hover:bg-neutral-800' type="password" name='password' placeholder='Password' autoComplete="current-password" required />
+                            <span className='absolute right-2 top-1 rounded-r-full bg-neutral-900 p-2 group-hover:bg-neutral-800'><img ref={ref} className='invert size-6 cursor-pointer' onClick={passVisibility} src="icons/eye-close.svg" alt="hide" /></span>
                         </div>
                     </div>
                     <div className='flex justify-center font-semibold'>
