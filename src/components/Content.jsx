@@ -16,7 +16,7 @@ const Content = () => {
     const [dialog, setdialog] = useState(false)
     const [choice, setchoice] = useState("")
 
-    const serverURL=import.meta.env.VITE_SERVER_URL;
+    const serverURL=`${import.meta.env.VITE_SERVER_URL}`;
 
     const getData = async () => {
         let req = await fetch(serverURL);
